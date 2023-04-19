@@ -3,16 +3,23 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
+    <meta charset="UTF-8">
+    <title>Insert title here</title>
 </head>
 <body>
 
-    <h1>food.jsp입니다.</h1>
-    <ur>
-        <li>볶음밥</li>
-        <li>치킨</li>
-        <li>족발</li>
-    </ur>
+<h1>food.jsp입니다.</h1>
+
+<form action="/spring/food-select" method="post">
+    # 음식명: <input type="text" name="foodName"> <br>
+    # 음식 카테고리:
+    <select name="category">
+        <option value="KOREAN">한식</option>
+        <option value="WESTERN">양식</option>
+        <option value="CHINESE">중식</option>
+    </select>
+    <br>
+    <button type="submit">확인</button>
+</form>
 </body>
 </html>
