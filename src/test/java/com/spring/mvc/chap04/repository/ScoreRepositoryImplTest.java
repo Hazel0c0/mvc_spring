@@ -26,14 +26,15 @@ class ScoreRepositoryImplTest {
     List<Score> scoreList = repository.findAll();
 
     // then: 테스트 결과 확인
-    System.out.println(scoreList.size() == 3);
+    System.out.println(scoreList.size() == 5);
 
     // 나는 스코어리스트의 사이즈가 3인 것이 참이라고 단언한다.
 //        Assertions.assertTrue(scoreList.size() == 3);
-    assertEquals(3, scoreList.size());
+    assertEquals(5, scoreList.size());
 
     // 나는 리스트의 첫번째 객체의 이름이 뽀로로라고 단언한다.
     assertEquals("뽀로로", scoreList.get(0).getName());
+
   }
 
   @Test
@@ -80,9 +81,9 @@ class ScoreRepositoryImplTest {
     List<Score> scoreList = repository.findAll();
 
     // then
-    assertEquals(4, scoreList.size());
+    assertEquals(6, scoreList.size());
     assertTrue(flag);
-    assertEquals(4, scoreList.get(scoreList.size() - 1).getStuNum());
+    assertEquals(6, scoreList.get(scoreList.size() - 1).getStuNum());
 
 
 

@@ -1,5 +1,6 @@
 package com.spring.mvc.chap04.repository;
 
+import com.spring.mvc.chap04.dto.ScoreRequestDTO;
 import com.spring.mvc.chap04.entity.Grade;
 import com.spring.mvc.chap04.entity.Score;
 import org.springframework.stereotype.Component;
@@ -23,9 +24,13 @@ public class ScoreRepositoryImpl implements ScoreRepository {
 
   static {
     scoreMap = new HashMap<>();
-    Score stu1 = new Score("뽀로로", 100, 50, 70, ++sequence, 0, 0, A);
-    Score stu2 = new Score("춘식이", 33, 56, 12, ++sequence, 0, 0, A);
-    Score stu3 = new Score("대길이", 88, 12, 0, ++sequence, 0, 0, A);
+    Score stu1 = new Score(new ScoreRequestDTO("뽀로로", 100, 34, 91));
+    Score stu2 = new Score(new ScoreRequestDTO("춘식이", 77, 99, 87));
+    Score stu3 = new Score(new ScoreRequestDTO("대길이", 98, 66, 85));
+
+    stu1.setStuNum(++sequence);
+    stu2.setStuNum(++sequence);
+    stu3.setStuNum(++sequence);
 
     scoreMap.put(stu1.getStuNum(), stu1);
     scoreMap.put(stu2.getStuNum(), stu2);
@@ -36,7 +41,29 @@ public class ScoreRepositoryImpl implements ScoreRepository {
   public List<Score> findAll() {
     return new ArrayList<>(scoreMap.values())
         .stream()
+//      .sorted(comparator)
         .sorted(comparing(Score::getStuNum))
+        .collect(toList())
+        ;
+  }
+
+  @Override
+  public List<Score> findAll(String sort) {
+    Comparator<Score> comparator = comparing(Score::getStuNum);
+    switch (sort) {
+      case "num":
+        comparator = comparing(Score::getStuNum);
+        break;
+      case "name":
+        comparator = comparing(Score::getName);
+        break;
+      case "avg":
+        comparator = comparing(Score::getAverage).reversed();
+        break;
+    }
+    return scoreMap.values()
+        .stream()
+        .sorted(comparator)
         .collect(toList())
         ;
   }
@@ -48,6 +75,7 @@ public class ScoreRepositoryImpl implements ScoreRepository {
     }
     score.setStuNum(++sequence);
     scoreMap.put(score.getStuNum(), score);
+    System.out.println(findAll());
     return true;
   }
 
@@ -62,4 +90,5 @@ public class ScoreRepositoryImpl implements ScoreRepository {
   public Score findByStuNum(int stuNum) {
     return scoreMap.get(stuNum);
   }
+
 }
