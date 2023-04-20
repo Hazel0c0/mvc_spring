@@ -10,16 +10,18 @@ import java.util.List;
 // 어디에서 조회하니? 어디에서 삭제하니?
 public interface ScoreRepository {
 
-  // 성적 정보 전체 목록 조회
-  List<Score> findAll();
+    // 성적 정보 전체 목록 조회
+    List<Score> findAll(); // 일반조회
+    default List<Score> findAll(String sort) {
+        return null; // 오버라이딩 강제 X
+    }; // 정렬 목록조회
 
-  // 성적 정보 등록
-  boolean save(Score score);
+    // 성적 정보 등록
+    boolean save(Score score);
 
-  // 성적 정보 한개 삭제
-  boolean deleteByStuNum(int stuNum);
+    // 성적 정보 한개 삭제
+    boolean deleteByStuNum(int stuNum);
 
-  // 성적 정보 개별 조회
-  Score findByStuNum(int stuNum);
-
+    // 성적 정보 개별 조회
+    Score findByStuNum(int stuNum);
 }
