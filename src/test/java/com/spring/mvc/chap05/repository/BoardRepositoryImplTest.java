@@ -15,5 +15,6 @@ class BoardRepositoryImplTest {
   void findAllTest() {
     List<Board> bList=br.findAll();
     assertEquals(3, bList.size());
+    System.out.println(bList);
   }
 }
