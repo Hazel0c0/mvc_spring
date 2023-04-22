@@ -33,22 +33,22 @@
 
 
   <div class="card-container">
-    <c:forEach var="b" items="bList">
+    <c:forEach var="b" items="${bList}">
       <div class="card-wrapper">
         <section class="card">
           <div class="card-title-wrapper">
-            <h2 class="card-title">${b.title}/h2>
+            <h2 class="card-title">${b.title}</h2>
             <div class="time-view-wrapper">
               <div class="time"><i class="far fa-clock"></i>2023-04-14 12:50</div>
               <div class="view">
                 <i class="fas fa-eye"></i>
-                <span class="view-count"${b.viewCount}/span>
+                <span class="view-count">${b.viewCount}</span>
               </div>
             </div>
           </div>
           <div class="card-content">
             <p>
-              ${b.content}
+                ${b.content}
             </p>
           </div>
         </section>
@@ -59,113 +59,56 @@
         </div>
       </div>
     </c:forEach>
-
-
-
-    <div class="card-wrapper">
-      <section class="card">
-        <div class="card-title-wrapper">
-          <h2 class="card-title">룰루랄라~~2</h2>
-          <div class="time-view-wrapper">
-            <div class="time"><i class="far fa-clock"></i>2023-04-14 12:50</div>
-            <div class="view">
-              <i class="fas fa-eye"></i>
-              <span class="view-count">15</span>
-            </div>
-          </div>
-        </div>
-        <div class="card-content">
-          <p>
-            어쩌구 저쩌구 .... (30자 후 줄임처리)
-          </p>
-        </div>
-      </section>
-      <div class="card-btn-group">
-        <button class="del-btn">
-          <i class="fas fa-times"></i>
-        </button>
-      </div>
-    </div>
-
-
-    <div class="card-wrapper">
-      <section class="card">
-        <div class="card-title-wrapper">
-          <h2 class="card-title">룰루랄라~~</h2>
-          <div class="time-view-wrapper">
-            <div class="time"><i class="far fa-clock"></i>2023-04-14 12:50</div>
-            <div class="view">
-              <i class="fas fa-eye"></i>
-              <span class="view-count">15</span>
-            </div>
-          </div>
-        </div>
-        <div class="card-content">
-          <p>
-            어쩌구 저쩌구 .... (30자 후 줄임처리)
-          </p>
-        </div>
-      </section>
-      <div class="card-btn-group">
-        <button class="del-btn">
-          <i class="fas fa-times"></i>
-        </button>
-      </div>
-    </div>
-
   </div>
 
-</div>
+  <script>
+      function removeDown(e) {
+          if (!e.target.matches('.card-container *')) return;
+          const $targetCard = e.target.closest('.card-wrapper');
+          $targetCard?.removeAttribute('id', 'card-down');
+      }
 
+      function removeHover(e) {
+          if (!e.target.matches('.card-container *')) return;
+          const $targetCard = e.target.closest('.card');
+          $targetCard?.classList.remove('card-hover');
 
-<script>
-    function removeDown(e) {
-        if (!e.target.matches('.card-container *')) return;
-        const $targetCard = e.target.closest('.card-wrapper');
-        $targetCard?.removeAttribute('id', 'card-down');
-    }
+          const $delBtn = e.target.closest('.card-wrapper')?.querySelector('.del-btn');
+          $delBtn.style.opacity = '0';
+      }
 
-    function removeHover(e) {
-        if (!e.target.matches('.card-container *')) return;
-        const $targetCard = e.target.closest('.card');
-        $targetCard?.classList.remove('card-hover');
+      const $cardContainer = document.querySelector('.card-container');
 
-        const $delBtn = e.target.closest('.card-wrapper')?.querySelector('.del-btn');
-        $delBtn.style.opacity = '0';
-    }
+      $cardContainer.onmouseover = e => {
 
-    const $cardContainer = document.querySelector('.card-container');
+          if (!e.target.matches('.card-container *')) return;
 
-    $cardContainer.onmouseover = e => {
+          const $targetCard = e.target.closest('.card');
+          $targetCard?.classList.add('card-hover');
 
-        if (!e.target.matches('.card-container *')) return;
+          const $delBtn = e.target.closest('.card-wrapper')?.querySelector('.del-btn');
+          $delBtn.style.opacity = '1';
+      }
 
-        const $targetCard = e.target.closest('.card');
-        $targetCard?.classList.add('card-hover');
+      $cardContainer.onmousedown = e => {
 
-        const $delBtn = e.target.closest('.card-wrapper')?.querySelector('.del-btn');
-        $delBtn.style.opacity = '1';
-    }
+          if (!e.target.matches('.card-container *')) return;
 
-    $cardContainer.onmousedown = e => {
+          const $targetCard = e.target.closest('.card-wrapper');
+          $targetCard?.setAttribute('id', 'card-down');
+      };
 
-        if (!e.target.matches('.card-container *')) return;
+      $cardContainer.onmouseup = removeDown;
 
-        const $targetCard = e.target.closest('.card-wrapper');
-        $targetCard?.setAttribute('id', 'card-down');
-    };
+      $cardContainer.addEventListener('mouseout', removeDown);
+      $cardContainer.addEventListener('mouseout', removeHover);
 
-    $cardContainer.onmouseup = removeDown;
+      // write button event
+      document.querySelector('.add-btn').onclick = e => {
+          window.location.href = '/card/write';
+      };
 
-    $cardContainer.addEventListener('mouseout', removeDown);
-    $cardContainer.addEventListener('mouseout', removeHover);
-
-    // write button event
-    document.querySelector('.add-btn').onclick = e => {
-        window.location.href = '/card/write';
-    };
-
-</script>
+  </script>
 
 </body>
 
