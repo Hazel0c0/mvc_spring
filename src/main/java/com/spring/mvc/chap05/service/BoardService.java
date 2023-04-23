@@ -25,7 +25,10 @@ public class BoardService {
         return boardRepository.findOne(boardNo);
     }
     public boolean save(BoardSaveRequestDTO boardDTO) {
-        boardRepository.save(new Board(boardDTO));
-        return false;
+        return boardRepository.save(new Board(boardDTO));
+    }
+
+    public boolean deleteByNo(int boardNo){
+        return boardRepository.deleteByNo(boardNo);
     }
 }

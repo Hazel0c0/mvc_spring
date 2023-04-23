@@ -30,11 +30,13 @@
   </div>
   <div class="card-container">
     <div class="card-wrapper">
-      <form action="/card/write" method="POST">
-        <section class="card">
-          <div class="card-title-wrapper">
-            <h2 class="card-title">
-              <input type="text" name="title">
+      <form action="/card/write" method="GET">
+                <section class="card">
+                  <div class="card-title-wrapper">
+                    <h2 class="card-title">
+                      <label>
+                        # 제목 : <input class="yo" type="text" name="title">
+              </label>
             </h2>
             <div class="time-view-wrapper">
               <div class="time"><i class="far fa-clock"></i>2023-04-14 12:50</div>
@@ -46,19 +48,30 @@
           </div>
           <div class="card-content">
             <p>
-              <input type="text" name="content">
+              <label>
+                <textarea class="yo" name="content" rows="5" cols="33">내용을 작성해주세요...
+                </textarea>
+              </label>
             </p>
           </div>
         </section>
         <div class="card-btn-group">
           <label>
             <button type="submit">추가하기</button>
-            <button type="button" onclick="history.back()">이전으로</button>          </label>
+            <button type="button" onclick="history.back()">이전으로</button>
+            <button id="go-home" type="button">게시판으로</button>
+          </label>
         </div>
       </form>
     </div>
   </div>
 </div>
+<script>
+    const $homeBtn = document.getElementById('go-home');
+    $homeBtn.onclick = e => {
+        window.location.href = '/card/list'; // GET요청
+    };
+</script>
 </body>
 
 </html>

@@ -49,12 +49,17 @@ public class BoardRepositoryImpl
 
   @Override
   public boolean save(Board board) {
+    if (boardMap.containsKey(board.getBoardNo())) return false;
 
-    return false;
+    boardMap.put(board.getBoardNo(), board);
+    return true;
   }
 
   @Override
   public boolean deleteByNo(int boardNo) {
-    return false;
+    if (!boardMap.containsKey(boardNo)) return false;
+
+    boardMap.remove(boardNo);
+    return true;
   }
 }

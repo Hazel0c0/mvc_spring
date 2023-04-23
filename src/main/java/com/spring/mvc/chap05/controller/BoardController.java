@@ -32,17 +32,22 @@ public class BoardController {
     }
     @GetMapping("/findCard")
     public String findOne(int boardNo){
-        System.out.println("/card/findOne : GET!");
+        System.out.println("/card/write : POST!");
         Board findCard = boardService.findOne(boardNo);
         return "redirect:/card/list";
     }
 
     // 게시글 하나 상세보기
-    @PostMapping("/write")
+    @GetMapping("/write")
     public String save(BoardSaveRequestDTO boardDTO) {
-        System.out.println("/card/write : POST!");
+        System.out.println("/card/write : GET!");
 
         boardService.save(boardDTO);
-        return "chap05/save";
+        return "chap05/boardWrite";
     }
+    @GetMapping("/remove")
+    public String deleteByNo(int boardNo){
+        System.out.println("/card/remove : POST!");
+        boardService.deleteByNo(boardNo);
+        return "redirect:/card/list";    }
 }
