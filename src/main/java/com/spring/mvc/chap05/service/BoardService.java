@@ -1,5 +1,6 @@
 package com.spring.mvc.chap05.service;
 
+import com.spring.mvc.chap05.dto.BoardSaveRequestDTO;
 import com.spring.mvc.chap05.entity.Board;
 import com.spring.mvc.chap05.repository.BoardRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,4 +21,11 @@ public class BoardService {
         return boardRepository.findAll();
     }
 
+    public Board findOne(int boardNo) {
+        return boardRepository.findOne(boardNo);
+    }
+    public boolean save(BoardSaveRequestDTO boardDTO) {
+        boardRepository.save(new Board(boardDTO));
+        return false;
+    }
 }

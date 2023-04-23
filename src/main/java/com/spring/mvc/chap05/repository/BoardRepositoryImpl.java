@@ -1,6 +1,7 @@
 package com.spring.mvc.chap05.repository;
 
 import com.spring.mvc.chap04.entity.Score;
+import com.spring.mvc.chap05.dto.BoardSaveRequestDTO;
 import com.spring.mvc.chap05.entity.Board;
 import org.springframework.stereotype.Repository;
 
@@ -16,13 +17,12 @@ public class BoardRepositoryImpl
     implements BoardRepository {
 
   private final static Map<Integer, Board> boardMap;
-  private static int seq;
 
   static {
     boardMap = new HashMap<>();
-    Board b1 = new Board(++seq, "초 깔끔한맛 진로", "제로슈가 다이어트 할 때 먹어도되용", 0, 1);
-    Board b2 = new Board(++seq, "오늘처럼 처음처럼", "나한텐 너무 쓴 처음처럼", 0, 1);
-    Board b3 = new Board(++seq, "이슬만 먹어요 참이슬", "달달구리 참이슬 살쪄", 0, 1);
+    Board b1 = new Board("초 깔끔한맛 진로", "제로슈가 다이어트 할 때 먹어도되용");
+    Board b2 = new Board(new BoardSaveRequestDTO("오늘처럼 처음처럼", "나한텐 너무 쓴 처음처럼"));
+    Board b3 = new Board(new BoardSaveRequestDTO("이슬만 먹어요 참이슬", "달달구리 참이슬 살쪄"));
 
     boardMap.put(b1.getBoardNo(), b1);
     boardMap.put(b2.getBoardNo(), b2);
@@ -37,13 +37,19 @@ public class BoardRepositoryImpl
         .collect(toList());
   }
 
+  // 원하는 해당 게시판 검색
   @Override
   public Board findOne(int boardNo) {
-    return null;
+    return boardMap
+        .values()
+        .stream()
+        .filter(s->s.getBoardNo()==boardNo)
+        .findFirst().get();
   }
 
   @Override
   public boolean save(Board board) {
+
     return false;
   }
 
