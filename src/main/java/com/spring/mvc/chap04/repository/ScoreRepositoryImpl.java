@@ -13,7 +13,8 @@ import static com.spring.mvc.chap04.entity.Grade.*;
 import static java.util.Comparator.*;
 import static java.util.stream.Collectors.*;
 
-@Repository // 스프링 빈 등록 : 객체의 생성의 제어권을 스프링에게 위임
+//@Repository // 스프링 빈 등록 : 객체의 생성의 제어권을 스프링에게 위임
+@Repository("memory")
 public class ScoreRepositoryImpl implements ScoreRepository {
 
   // key: 학번, value: 성적정보

@@ -3,6 +3,9 @@ package com.spring.mvc.chap04.entity;
 import com.spring.mvc.chap04.dto.ScoreRequestDTO;
 import lombok.*;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 @Setter @Getter
 @ToString @EqualsAndHashCode
 @NoArgsConstructor
@@ -20,6 +23,19 @@ public class Score {
     public Score(ScoreRequestDTO dto) {
         this.name = dto.getName();
         changeScore(dto);
+    }
+
+    public Score(ResultSet rs) throws SQLException {
+            // db 에서 읽어오는 작엄
+            this.stuNum=rs.getInt("stu_num");
+//                                   " db랑 맞춰야함 "
+            this.name=rs.getString("stu_name");
+            this.kor = rs.getInt("kor");
+            this.eng = rs.getInt("eng");
+            this.math = rs.getInt("math");
+            this.total = rs.getInt("total");
+            this.average=rs.getDouble("average");
+            this.grade= Grade.valueOf(rs.getString("grade"));
     }
 
     public void changeScore(ScoreRequestDTO dto) {
