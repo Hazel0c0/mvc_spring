@@ -1,7 +1,8 @@
 package com.spring.mvc.chap05.controller;
 
-import com.spring.mvc.chap05.dto.BoardSaveRequestDTO;
-import com.spring.mvc.chap05.entity.Board;
+import com.spring.mvc.chap05.dto.BoardDetailResponseDTO;
+import com.spring.mvc.chap05.dto.BoardListResponseDTO;
+import com.spring.mvc.chap05.dto.BoardWriteRequestDTO;
 import com.spring.mvc.chap05.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -10,12 +11,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/card")
+@RequestMapping("/board")
 public class BoardController {
 
     private final BoardService boardService;
@@ -23,31 +23,57 @@ public class BoardController {
     // 목록 조회 요청
     @GetMapping("/list")
     public String list(Model model) {
-        System.out.println("/card/list : GET!");
-
-        List<Board> boardList = boardService.findAll();
-        model.addAttribute("bList",boardList);
-
+        System.out.println("/board/list : GET");
+        List<BoardListResponseDTO> responseDTOS
+                = boardService.getList();
+        model.addAttribute("bList", responseDTOS);
         return "chap05/list";
     }
-    @GetMapping("/findCard")
-    public String findOne(int boardNo){
-        System.out.println("/card/write : POST!");
-        Board findCard = boardService.findOne(boardNo);
-        return "redirect:/card/list";
-    }
 
-    // 게시글 하나 상세보기
+    // 글쓰기 화면 조회 요청
     @GetMapping("/write")
-    public String save(BoardSaveRequestDTO boardDTO) {
-        System.out.println("/card/write : GET!");
-
-        boardService.save(boardDTO);
-        return "chap05/boardWrite";
+    public String write() {
+        System.out.println("/board/write : GET");
+        return "chap05/write";
     }
-    @GetMapping("/remove")
-    public String deleteByNo(int boardNo){
-        System.out.println("/card/remove : POST!");
-        boardService.deleteByNo(boardNo);
-        return "redirect:/card/list";    }
+    // 수정
+    @GetMapping("/update")
+    public String update(int bno, Model model) {
+        System.out.println("/board/update : GET");
+        BoardDetailResponseDTO board = boardService.getDetail(bno);
+        model.addAttribute("b", board);
+        return "chap05/update";
+    }
+    @PostMapping("/update")
+    public String update(int bno,BoardWriteRequestDTO dto) {
+        System.out.println("/board/update : POST" );
+        System.out.println("dto = " + dto);
+        boardService.modify(dto,bno);
+        return "redirect:/board/detail?bno="+bno;
+    }
+
+    // 글 등록 요청 처리
+    @PostMapping("/write")
+    public String write(BoardWriteRequestDTO dto) {
+        System.out.println("/board/write : POST");
+        boardService.register(dto);
+        return "redirect:/board/list";
+    }
+
+    // 글 삭제 요청 처리
+    @GetMapping("/delete")
+    public String delete(int bno) {
+        System.out.println("/board/delete : GET");
+        boardService.delete(bno);
+        return "redirect:/board/list";
+    }
+
+    // 글 상세 조회 요청
+    @GetMapping("/detail")
+    public String detail(int bno, Model model) {
+        System.out.println("/board/detail : GET");
+        model.addAttribute("b", boardService.getDetail(bno));
+        return "chap05/detail";
+    }
+
 }

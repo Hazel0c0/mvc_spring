@@ -1,10 +1,12 @@
 package com.spring.mvc.chap05.repository;
 
-import com.spring.mvc.chap04.entity.Score;
-import com.spring.mvc.chap05.dto.BoardSaveRequestDTO;
 import com.spring.mvc.chap05.entity.Board;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,52 +16,57 @@ import static java.util.stream.Collectors.toList;
 
 @Repository
 public class BoardRepositoryImpl
-    implements BoardRepository {
+        implements BoardRepository {
 
-  private final static Map<Integer, Board> boardMap;
+    private final static Map<Integer, Board> boardMap;
+    private static int sequence;
 
-  static {
-    boardMap = new HashMap<>();
-    Board b1 = new Board("초 깔끔한맛 진로", "제로슈가 다이어트 할 때 먹어도되용");
-    Board b2 = new Board(new BoardSaveRequestDTO("오늘처럼 처음처럼", "나한텐 너무 쓴 처음처럼"));
-    Board b3 = new Board(new BoardSaveRequestDTO("이슬만 먹어요 참이슬", "달달구리 참이슬 살쪄"));
+    static {
+        boardMap = new HashMap<>();
+        Board b1 = new Board(++sequence, "돈까스 레시피", "그냥 이마트에서 사서 에어프라이 돌려라~");
+        Board b2 = new Board(++sequence, "관종의 조건", "이 세상은 나를 중심으로 돌아간다라는 마음으로 행동해라ㅋㅋ");
+        Board b3 = new Board(++sequence, "이마트 영업시간", "10시에 마감하는걸로 바뀌었나요?? 마감털이 몇시에 가야되죠?? 하.....");
+        boardMap.put(b1.getBoardNo(), b1);
+        boardMap.put(b2.getBoardNo(), b2);
+        boardMap.put(b3.getBoardNo(), b3);
+    }
 
-    boardMap.put(b1.getBoardNo(), b1);
-    boardMap.put(b2.getBoardNo(), b2);
-    boardMap.put(b3.getBoardNo(), b3);
-  }
+    @Override
+    public List<Board> findAll() {
+        return boardMap.values()
+                .stream()
+                .sorted(comparing(Board::getBoardNo).reversed())
+                .collect(toList())
+                ;
+    }
 
-  @Override
-  public List<Board> findAll() {
-    return boardMap.values()
-        .stream()
-        .sorted(comparing(Board::getBoardNo))
-        .collect(toList());
-  }
+    @Override
+    public Board findOne(int boardNo) {
+        return boardMap.get(boardNo);
+    }
 
-  // 원하는 해당 게시판 검색
-  @Override
-  public Board findOne(int boardNo) {
-    return boardMap
-        .values()
-        .stream()
-        .filter(s->s.getBoardNo()==boardNo)
-        .findFirst().get();
-  }
+    @Override
+    public boolean save(Board board) {
+        board.setBoardNo(++sequence);
 
-  @Override
-  public boolean save(Board board) {
-    if (boardMap.containsKey(board.getBoardNo())) return false;
+        LocalDateTime regDateTime = board.getRegDateTime();
+        Date ddd = Date.from(regDateTime.atZone(ZoneId.systemDefault()).toInstant());
+        System.out.println("ddd = " + ddd);
 
-    boardMap.put(board.getBoardNo(), board);
-    return true;
-  }
+        LocalDateTime eee = new Timestamp(ddd.getTime()).toLocalDateTime();
+        System.out.println("eee = " + eee);
 
-  @Override
-  public boolean deleteByNo(int boardNo) {
-    if (!boardMap.containsKey(boardNo)) return false;
+        boardMap.put(board.getBoardNo(), board);
+        return true;
+    }
 
-    boardMap.remove(boardNo);
-    return true;
-  }
+    @Override
+    public boolean deleteByNo(int boardNo) {
+        boardMap.remove(boardNo);
+        return true;
+    }
+
+
+
+
 }

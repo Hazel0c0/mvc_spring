@@ -1,6 +1,6 @@
-package com.spring.mvc.chap05.repository;
+package com.spring.mvc.chap05_me.repository;
 
-import com.spring.mvc.chap05.entity.Board;
+import com.spring.mvc.chap05_me.entity.Board;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

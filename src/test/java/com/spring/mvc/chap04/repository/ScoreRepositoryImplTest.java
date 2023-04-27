@@ -1,7 +1,6 @@
 package com.spring.mvc.chap04.repository;
 
 import com.spring.mvc.chap04.entity.Score;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -33,7 +32,7 @@ class ScoreRepositoryImplTest {
     assertEquals(5, scoreList.size());
 
     // 나는 리스트의 첫번째 객체의 이름이 뽀로로라고 단언한다.
-    assertEquals("뽀로로", scoreList.get(0).getName());
+    assertEquals("뽀로로", scoreList.get(0).getStuName());
 
   }
 
@@ -49,7 +48,7 @@ class ScoreRepositoryImplTest {
     Score score = repository.findByStuNum(stuNum);
     // then
     assertEquals(33, score.getKor());
-    assertEquals("춘식이", score.getName());
+    assertEquals("춘식이", score.getStuName());
   }
   @Test
   @DisplayName("저장소에서 학번이 2인 학생을 삭제한 후에" +
@@ -72,7 +71,7 @@ class ScoreRepositoryImplTest {
   void saveTest() {
     // given
     Score score = new Score();
-    score.setName("언년이");
+    score.setStuName("언년이");
     score.setKor(100);
     score.setMath(50);
     score.setEng(0);

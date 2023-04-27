@@ -18,7 +18,6 @@ public class PersonSpringRepository {
 
   private final JdbcTemplate jdbcTemplate;
 
-  //저장기능
   // 저장 기능
   public void savePerson(Person p) {
     String sql = "INSERT INTO person " +

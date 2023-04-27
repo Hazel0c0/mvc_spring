@@ -1,34 +1,57 @@
 package com.spring.mvc.chap05.service;
 
-import com.spring.mvc.chap05.dto.BoardSaveRequestDTO;
+import com.spring.mvc.chap05.dto.BoardDetailResponseDTO;
+import com.spring.mvc.chap05.dto.BoardListResponseDTO;
+import com.spring.mvc.chap05.dto.BoardWriteRequestDTO;
 import com.spring.mvc.chap05.entity.Board;
+import com.spring.mvc.chap05.repository.BoardMapper;
 import com.spring.mvc.chap05.repository.BoardRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.*;
 
 @Service
 @RequiredArgsConstructor
 public class BoardService {
 
-    private final BoardRepository boardRepository;
+    //    private final BoardRepository boardRepository;
+    private final BoardMapper boardRepository;
 
     // 중간처리 기능 자유롭게 사용
+    // 목록 중간처리
+    public List<BoardListResponseDTO> getList() {
 
-    // 모든 목록 찾기
-    public List<Board> findAll(){
-        return boardRepository.findAll();
+        return boardRepository.findAll()
+            .stream()
+            .map(BoardListResponseDTO::new)
+            .collect(toList())
+            ;
     }
 
-    public Board findOne(int boardNo) {
-        return boardRepository.findOne(boardNo);
+    // 글 등록 중간처리
+    public boolean register(BoardWriteRequestDTO dto) {
+        return boardRepository.save(new Board(dto));
     }
-    public boolean save(BoardSaveRequestDTO boardDTO) {
-        return boardRepository.save(new Board(boardDTO));
+    public boolean modify(BoardWriteRequestDTO dto,int bno) {
+        Board board = new Board(dto);
+        board.setBoardNo(bno);
+        return boardRepository.modify(board);
     }
 
-    public boolean deleteByNo(int boardNo){
-        return boardRepository.deleteByNo(boardNo);
+    public boolean delete(int bno) {
+        return boardRepository.deleteByNo(bno);
+    }
+
+    public BoardDetailResponseDTO getDetail(int bno) {
+
+        Board board = boardRepository.findOne(bno);
+        // 조회수 상승 처리
+//        board.setViewCount(board.getViewCount() + 1);
+        boardRepository.upViewCount(bno);
+        return new BoardDetailResponseDTO(board);
     }
 }
