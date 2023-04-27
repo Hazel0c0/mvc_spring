@@ -48,6 +48,6 @@ class PersonSpringRepositoryTest {
   @Test
   void findAllTest(){
     List<Person> people =repository.findAll();
-    for ()
+//    for ()
   }
 }

@@ -10,6 +10,7 @@ import java.sql.SQLException;
 @ToString @EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Score {
     // 클라이언트가 주는 데이터
     private String name; // 학생 이름
