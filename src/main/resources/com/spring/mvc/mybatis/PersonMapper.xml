@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace에는 인터페이스 풀 네임(패키지+인터페이스이름) -->
+<mapper namespace="com.spring.mvc.mybatis.PersonMapper">
+
+<!--  sql 작성 : 추상메서드 별로 작성  -->
+<!--  id에는 추상메서드 이름을 적습니다.  -->
+    <insert id="save">
+        INSERT INTO person
+            (person_name, person_age)
+        VALUES (#{personName},#{personAge})
+--         필드 이름과 똑같이 써야함
+    </insert>
+
+    <update id="change">
+        UPDATE person
+        SET person_name = #{personName}, person_age=#{personAge}
+        WHERE id = #{id}
+    </update>
+<!--    객체가 들어오면 필드명을 써주고 (Person p) -->
+
+<!--    기본데이터 타입이 들어오면 파라미터 타입 써주면 됨 (long id) -> id -->
+    <delete id="remove">
+        DELETE from person
+        where id = #{id}
+    </delete>
+    
+<!--    ORM : 자바객체 필드랑 테이블 컬럼을 매핑 -->
+    <resultMap id="person" type="com.spring.mvc.jdbc.Person">
+            <result property="personName" column="person_name" />
+            <result property="personAge" column="person_age" />
+    </resultMap>
+
+    <select id="findAll" resultMap="person">
+        SELECT * FROM person
+--         한줄이면 하나만 / 여러줄일 경우에도 알아서 List에 넣어줌
+    </select>
+
+    <select id="findOne" resultMap="person">
+        SELECT * FROM person
+        WHERE id = #{id}
+    </select>
+</mapper>
