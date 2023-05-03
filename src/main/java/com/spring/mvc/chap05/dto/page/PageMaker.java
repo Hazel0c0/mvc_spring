@@ -2,10 +2,8 @@ package com.spring.mvc.chap05.dto.page;
 
 import lombok.Getter;
 import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
 
 @Getter @ToString
-@Slf4j
 public class PageMaker {
 
   // 한번에 그려낼 페이지 수
@@ -14,15 +12,13 @@ public class PageMaker {
   private static final int PAGE_COUNT = 5;
 
   // 화면 렌더링시 페이지의 시작값과 끝값
-  private int begin, end;
+  private int begin, end, finalPage;
 
   // 이전, 다음 버튼 활성화 여부
   private boolean prev, next;
 
   // 현재 요청 페이지 정보
   private Page page;
-
-  private int endPage;
 
   // 총 게시물 수
   private int totalCount;
@@ -59,16 +55,16 @@ public class PageMaker {
           올림처리(총 게시물 수 / 한 페이지당 배치할 게시물 수)
 
          */
-    endPage = (int) Math.ceil((double)totalCount / page.getAmount());
+    this.finalPage = (int) Math.ceil((double)totalCount / page.getAmount());
 
     // 마지막 페이지 구간에서만 엔드보정이 일어나야 함
-    if (endPage < this.end) this.end = endPage;
+    if (this.finalPage < this.end) this.end = this.finalPage;
 
     // 이전 버튼 활성화 여부
     this.prev = begin > 1;
 
     // 다음 버튼 활성화 여부
-    this.next = end < endPage;
+    this.next = end < this.finalPage;
 
   }
 

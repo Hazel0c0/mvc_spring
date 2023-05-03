@@ -40,5 +40,4 @@ public class Board {
         this.content = dto.getContent();
         this.regDateTime = LocalDateTime.now();
     }
-
 }

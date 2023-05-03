@@ -24,7 +24,7 @@ public class DatabaseConfig {
         //히카리 설정
         HikariConfig config = new HikariConfig();
         config.setUsername("root"); //관리자 계정명 root
-        config.setPassword("1234");
+        config.setPassword("mariadb");
         config.setJdbcUrl("jdbc:mariadb://localhost:3306/spring");
         config.setDriverClassName("org.mariadb.jdbc.Driver");
         return new HikariDataSource(config);
