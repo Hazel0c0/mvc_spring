@@ -4,8 +4,20 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.spring.mvc.chap05.repository.BoardMapper">
     <select id="findAll" resultType="board">
-        SELECT board_no, title, content, view_count, reg_date_time
+        SELECT
+        board_no, title,
+        content, view_count, reg_date_time
         FROM tbl_board
+        <if test="type == 'title'">
+            WHERE title LIKE CONCAT('%', #{keyword}, '%')
+        </if>
+        <if test="type == 'content'">
+            WHERE content LIKE CONCAT('%', #{keyword}, '%')
+        </if>
+        <if test="type == 'tc'">
+            WHERE title LIKE CONCAT('%', #{keyword}, '%')
+            OR content LIKE CONCAT('%', #{keyword}, '%')
+        </if>
         ORDER BY board_no DESC
         LIMIT #{pageStart}, #{amount}
     </select>
