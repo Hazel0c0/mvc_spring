@@ -19,6 +19,7 @@ create table tbl_board (
 @ToString @EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Board {
 
     private int boardNo; // 게시글 번호
@@ -39,4 +40,5 @@ public class Board {
         this.content = dto.getContent();
         this.regDateTime = LocalDateTime.now();
     }
+
 }
