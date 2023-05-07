@@ -41,8 +41,8 @@ class ReplyMapperTest {
 
         for (int i = 1; i <= 1000; i++) {
             Reply r = Reply.builder()
-                    .replyWriter("aa " + i)
-                    .replyText("bb" + i)
+                    .replyWriter("aaa" + i)
+                    .replyText("asdfghj" + i)
                     .boardNo((long) (Math.random() * 300 + 1))
                     .build();
             replyMapper.save(r);
