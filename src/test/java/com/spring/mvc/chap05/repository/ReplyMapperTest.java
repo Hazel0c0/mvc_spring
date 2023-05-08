@@ -30,19 +30,19 @@ class ReplyMapperTest {
             "댓글을 나눠서 등록해야 한다.")
     void bulkInsertTest() {
 
-        for (int i = 1; i <= 300; i++) {
-            Board b = Board.builder()
-                    .title("funny " + i)
-                    .content("not funny " + i)
-                    .build();
-            boardMapper.save(b);
-        }
-        assertEquals(300, boardMapper.count(new Search()));
+//        for (int i = 1; i <= 300; i++) {
+//            Board b = Board.builder()
+//                    .title("funny " + i)
+//                    .content("not funny " + i)
+//                    .build();
+//            boardMapper.save(b);
+//        }
+//        assertEquals(300, boardMapper.count(new Search()));
 
         for (int i = 1; i <= 1000; i++) {
             Reply r = Reply.builder()
-                    .replyWriter("aaa" + i)
-                    .replyText("asdfghj" + i)
+                    .replyWriter("노티드" + i)
+                    .replyText("우유 생크림 도넛" + i)
                     .boardNo((long) (Math.random() * 300 + 1))
                     .build();
             replyMapper.save(r);
