@@ -410,6 +410,97 @@
         };
     }
 
+    // 댓글 삭제 이벤트 처리 함수
+    function replyRemoveClickEvent() {
+
+        const $replyData = document.getElementById('replyData');
+
+        $replyData.onclick = e => {
+
+            e.preventDefault();
+
+            // 삭제할 댓글의 PK값 읽기
+            const rno=e.target.closest('#replyContent').dataset.replyid;
+            if (e.target.matches('#replyDelBtn')) {
+                // console.log('삭제버튼 클릭!!');
+                if(!confirm('정말 삭제하니?')) return; //컴펌 안하면 나가
+
+                // const rno=e.target.parentElement.parentElement.dataset.replyid;
+                //서버에 삭제 비동기 요청
+                fetch(URL+'/'+rno, { //리플라이 넘버 넣어줘야함 (rno)
+                    method:'DELETE'
+                }).then(res => {
+                    if (res.status===200){
+                        console.log('댓글이 정상 삭제됨!');
+                        return res.json(); //삭제 되면 리턴되는 제이슨 가져오기
+                    }else {
+                        console.log('댓글 삭제 실패');
+                    }
+                }).then(responseResult => {
+                    renderReplyList(responseResult);
+                });
+            }else if (e.target.matches('#replyModBtn')){
+                console.log('수정화면 진입');
+
+                // 클릭한 수정 버튼 근처에 있는 텍스트 읽기
+                const replyText = e.target.parentElement.previousElementSibling.textContent;
+                // console.log(replyText);
+
+                // 모달에 모달바디에 textarea에 읽은 텍스트를 삽입
+                document.getElementById('modReplyText').value = replyText;
+
+                /*
+                다음 수정 완료 처리를 위해 미리 수정창을 띄울 때 댓글 번호를 모달에 붙여놓자
+                 */
+                const $modal=document.querySelector('.modal');
+                $modal.dataset.rno=rno;
+
+
+            }
+        };
+    }
+
+    // 서버에 수정 비동기 요청 처리 함수
+    function replyModifyClickEvent() {
+        const $modBtn = document.getElementById('replyModBtn');
+
+        $modBtn.onclick = e => {
+
+            const payload = {
+                rno: +document.querySelector('.modal').dataset.rno,
+                /*
+                이게있어야 where절에 사용
+                수정창 뜨기 전 수정버튼 누를 때는 rno 가까이에 있음
+                창 오픈 할 때 rno 몰래 담아놓기
+                 */
+                bno: +bno,
+                text : document.getElementById('modReplyText').value
+            }
+            // console.log(payload); // 데이터 잘 읽어왔음
+
+            fetch(URL,{
+                method: 'PUT',
+                headers: {
+                    'content-type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            }).then(res=> {
+                if (res.status === 200) {
+                    alert('댓글이 정상 수정되었습니다!');
+                    // 모달창 닫기
+                    document.getElementById('modal-close').click();
+                    return res.json();
+                } else {
+                    alert('댓글 수정에 실패했습니다.');
+                }
+            }).then(result => {
+                renderReplyList(result);
+            });
+
+        };
+
+    }
+
     //======== 메인 실행부 ========//
     (function () {
 
@@ -421,6 +512,12 @@
 
         // 댓글 등록 이벤트 등록
         makeReplyRegisterClickEvent();
+
+        // 삭제 이벤트 등록
+        replyRemoveClickEvent();
+
+        // 수정 이벤트 등록
+        replyModifyClickEvent();
     })();
 </script>
 </body>

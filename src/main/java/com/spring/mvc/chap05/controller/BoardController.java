@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import java.util.List;
 
 @Controller
-@RequiredArgsConstructor
+@RequiredArgsConstructor // 파이널만 생성자
 @RequestMapping("/board")
 @Slf4j
 public class BoardController {

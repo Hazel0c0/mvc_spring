@@ -15,7 +15,7 @@ import static java.util.stream.Collectors.toList;
 
 @Service
 @RequiredArgsConstructor
-public class BoardService {
+public class BoardService
 
     //    private final BoardRepository boardRepository;
     private final BoardMapper boardRepository;
