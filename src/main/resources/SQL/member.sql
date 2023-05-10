@@ -11,3 +11,9 @@ CREATE TABLE tbl_member
 );
 
 SELECT * FROM tbl_member;
+
+truncate table tbl_member;
+
+select *
+from tbl_member
+where account='qwer1234';

@@ -20,7 +20,9 @@ public interface MemberMapper {
      WHERE account = ?
      -> 중복되면 count =1 / 없으면 0
    */
-  int isDuplicate(@Param("type") String type, @Param("keyword") String keyword);
+  int isDuplicate(
+      @Param("type") String type,
+      @Param("keyword") String keyword);
   // 마이바티스 버전에 따라서 ^ 파람 구분 못하면 직접 써주기
   // type : 어떤 검사 할 건지
 }
