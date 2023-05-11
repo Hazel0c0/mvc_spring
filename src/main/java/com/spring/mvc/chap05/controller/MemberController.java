@@ -15,6 +15,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
 import static com.spring.mvc.chap05.service.LoginResult.SUCCESS;
 
 @Controller
@@ -32,6 +37,7 @@ public class MemberController {
     log.info("/members/sign-up GET - forwarding to jsp");
     return "members/sign-up";
   }
+
   // 회원가입 처리 요청
   @PostMapping("/sign-up")
   public String signUp(SignUpRequestDTO dto) {
@@ -39,34 +45,60 @@ public class MemberController {
     boolean flag = memberService.join(dto);
     return "redirect:/board/list";
   }
+
   //아이디 이메일 중복검사
   // 비동기 요청 처리
   @GetMapping("/check")
   @ResponseBody
-  public ResponseEntity<?> check(String type, String keyword){
+  public ResponseEntity<?> check(String type, String keyword) {
     log.info("/members/check?type={}&keyword={} ASYNC GET!", type, keyword);
 
-    boolean flag = memberService.checkSignUpValue(type,keyword);
+    boolean flag = memberService.checkSignUpValue(type, keyword);
     return ResponseEntity.ok().body(flag);
   }
 
   // 로그인 화면 요청
   @GetMapping("/sign-in")
-  public String signIn(){
+  public String signIn() {
     log.info("/members/sign-in GET - forwarding to jsp");
     return "members/sign-in";
   }
+
   //로그인 검증 요청
   @PostMapping("/sign-in")
   public String signIn(LoginRequestDTO dto
-      , RedirectAttributes ra){
-    log.info("/members/sign-in POST! - {}",dto);
-
-    memberService.authenticate(dto);
+                       // 리다이렉션시 2번째 응답에 데이터를 보내기 위함
+            , RedirectAttributes ra
+            , HttpServletResponse response
+            , HttpServletRequest request
+  ) {
+    log.info("/members/sign-in POST! - {}", dto);
 
     LoginResult result = memberService.authenticate(dto);
+//    memberService.authenticate(dto);
+
     //로그인 성공시
     if (result == SUCCESS) {
+      //서버에서 세션에 로그인 정보를 저장
+      memberService.maintainLoginState(
+          request.getSession(), dto.getAccount());
+      /*
+      // 서버에서 세션에 로그인 정보를 저장
+      HttpSession session=request.getSession();
+      session.setAttribute("login","메롱");
+//    ra.addFlashAttribute("loginFlag",true);
+       */
+
+      /*
+      // 쿠키 만들기
+      Cookie loginCookie = new Cookie("login","쿠로미");
+      // 쿠키 셋팅
+      loginCookie.setPath("/board"); //유효범위 : 여기서만 가지고 다니세요
+      loginCookie.setMaxAge(60*60*24); //유효시간
+
+      // 쿠키를 응답시에 실어서 클라이언트에게 전송
+      response.addCookie(loginCookie);
+       */
       return "redirect:/";
     }
 
@@ -78,6 +110,17 @@ public class MemberController {
 
   }
 
+  // 로그아웃 요청 처리
+  @GetMapping("/sign-out")
+  public String signOut(HttpSession session){
+    //세선에서 login 정보를 제거
+    session.removeAttribute("login");
+
+    // 세션을 아예 초기화 (세션만료 시간 초기화)
+    session.invalidate();
+
+    return "redirect:/";
+  }
 
 
 }

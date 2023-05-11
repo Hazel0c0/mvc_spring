@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @Controller
@@ -22,56 +24,79 @@ import java.util.List;
 @Slf4j
 public class BoardController {
 
-    private final BoardService boardService;
+  private final BoardService boardService;
 
-    // 목록 조회 요청
-    @GetMapping("/list")
-    public String list(Search page, Model model) {
-        log.info("/board/list : GET");
-        log.info("page : {}", page);
-        List<BoardListResponseDTO> responseDTOS
-                = boardService.getList(page);
+  // 목록 조회 요청
+  @GetMapping("/list")
+  public String list(
+      Search page
+      , Model model
+      , HttpServletRequest request
+  ) {
 
-        // 페이징 알고리즘 작동
-        PageMaker maker = new PageMaker(page, boardService.getCount(page));
+    boolean flag = false;
+    //세션을 확인
+    Object login = request.getSession().getAttribute("login");
+    if (login != null) flag = true;
 
-        model.addAttribute("bList", responseDTOS);
-        model.addAttribute("maker", maker);
-        model.addAttribute("s", page);
+        /*
+        //쿠키를 확인
+        Cookie[] cookies = request.getCookies();
+        for (Cookie c : cookies){
+            if (c.getName().equals("login")){
+                flag=true;
+                break;
+            }
+        }
 
-        return "chap05/list";
-    }
+         */
+    if (!flag) return "redirect:/members/sign-in";
 
-    // 글쓰기 화면 조회 요청
-    @GetMapping("/write")
-    public String write() {
-        System.out.println("/board/write : GET");
-        return "chap05/write";
-    }
+    log.info("/board/list : GET");
+    log.info("page : {}", page);
+    List<BoardListResponseDTO> responseDTOS
+        = boardService.getList(page);
 
-    // 글 등록 요청 처리
-    @PostMapping("/write")
-    public String write(BoardWriteRequestDTO dto) {
-        System.out.println("/board/write : POST");
-        boardService.register(dto);
-        return "redirect:/board/list";
-    }
+    // 페이징 알고리즘 작동
+    PageMaker maker = new PageMaker(page, boardService.getCount(page));
 
-    // 글 삭제 요청 처리
-    @GetMapping("/delete")
-    public String delete(int bno) {
-        System.out.println("/board/delete : GET");
-        boardService.delete(bno);
-        return "redirect:/board/list";
-    }
+    model.addAttribute("bList", responseDTOS);
+    model.addAttribute("maker", maker);
+    model.addAttribute("s", page);
 
-    // 글 상세 조회 요청
-    @GetMapping("/detail")
-    public String detail(int bno, @ModelAttribute("s") Search search, Model model) {
-        System.out.println("/board/detail : GET");
-        model.addAttribute("b", boardService.getDetail(bno));
+    return "chap05/list";
+  }
+
+  // 글쓰기 화면 조회 요청
+  @GetMapping("/write")
+  public String write() {
+    System.out.println("/board/write : GET");
+    return "chap05/write";
+  }
+
+  // 글 등록 요청 처리
+  @PostMapping("/write")
+  public String write(BoardWriteRequestDTO dto) {
+    System.out.println("/board/write : POST");
+    boardService.register(dto);
+    return "redirect:/board/list";
+  }
+
+  // 글 삭제 요청 처리
+  @GetMapping("/delete")
+  public String delete(int bno) {
+    System.out.println("/board/delete : GET");
+    boardService.delete(bno);
+    return "redirect:/board/list";
+  }
+
+  // 글 상세 조회 요청
+  @GetMapping("/detail")
+  public String detail(int bno, @ModelAttribute("s") Search search, Model model) {
+    System.out.println("/board/detail : GET");
+    model.addAttribute("b", boardService.getDetail(bno));
 //        model.addAttribute("s", search);
-        return "chap05/detail";
-    }
+    return "chap05/detail";
+  }
 
 }
