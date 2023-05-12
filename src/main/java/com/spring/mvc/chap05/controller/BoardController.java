@@ -1,12 +1,15 @@
 package com.spring.mvc.chap05.controller;
 
+import com.spring.mvc.chap05.dto.response.BoardDetailResponseDTO;
 import com.spring.mvc.chap05.dto.response.BoardListResponseDTO;
 import com.spring.mvc.chap05.dto.request.BoardWriteRequestDTO;
 import com.spring.mvc.chap05.dto.page.PageMaker;
 import com.spring.mvc.chap05.dto.page.Search;
 import com.spring.mvc.chap05.service.BoardService;
+import com.spring.mvc.util.LoginUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.Session;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 @Controller
@@ -34,10 +38,10 @@ public class BoardController {
       , HttpServletRequest request
   ) {
 
-    boolean flag = false;
-    //세션을 확인
-    Object login = request.getSession().getAttribute("login");
-    if (login != null) flag = true;
+//    boolean flag = false;
+//    //세션을 확인
+//    Object login = request.getSession().getAttribute("login");
+//    if (login != null) flag = true;
 
         /*
         //쿠키를 확인
@@ -50,7 +54,7 @@ public class BoardController {
         }
 
          */
-    if (!flag) return "redirect:/members/sign-in";
+//    if (!flag) return "redirect:/members/sign-in";
 
     log.info("/board/list : GET");
     log.info("page : {}", page);
@@ -69,16 +73,21 @@ public class BoardController {
 
   // 글쓰기 화면 조회 요청
   @GetMapping("/write")
-  public String write() {
+  public String write(HttpSession session) {
+
+//    if(!LoginUtil.isLogin(session)){
+//      return "redirect:/members/sign-in";
+//    }
+
     System.out.println("/board/write : GET");
     return "chap05/write";
   }
 
   // 글 등록 요청 처리
   @PostMapping("/write")
-  public String write(BoardWriteRequestDTO dto) {
+  public String write(BoardWriteRequestDTO dto,HttpSession session) {
     System.out.println("/board/write : POST");
-    boardService.register(dto);
+    boardService.register(dto, session);
     return "redirect:/board/list";
   }
 
@@ -94,9 +103,11 @@ public class BoardController {
   @GetMapping("/detail")
   public String detail(int bno, @ModelAttribute("s") Search search, Model model) {
     System.out.println("/board/detail : GET");
-    model.addAttribute("b", boardService.getDetail(bno));
-//        model.addAttribute("s", search);
+    BoardDetailResponseDTO detail = boardService.getDetail(bno);
+    model.addAttribute("b", detail);
+    //        model.addAttribute("s", search);
     return "chap05/detail";
   }
+
 
 }

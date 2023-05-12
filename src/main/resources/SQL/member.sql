@@ -10,10 +10,28 @@ CREATE TABLE tbl_member
     CONSTRAINT pk_member PRIMARY KEY (account)
 );
 
-SELECT * FROM tbl_member;
 
 truncate table tbl_member;
 
 select *
 from tbl_member
 where account='qwer1234';
+
+# 게시글에 회원 계정명을 FK로 추가
+alter table tbl_board
+add account VARCHAR(50) not null;
+
+alter table tbl_board
+add constraint fk_account
+foreign key (account)
+reference tbl_member (account);
+
+select  * from tbl_board;
+SELECT * FROM tbl_member;
+
+update tbl_member
+set auth='ADMIN'
+where account='aaa1234';
+
+update tbl_board
+set account = 'aaa1234';

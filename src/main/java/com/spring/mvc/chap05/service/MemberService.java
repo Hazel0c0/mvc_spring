@@ -5,6 +5,7 @@ import com.spring.mvc.chap05.dto.SignUpRequestDTO;
 import com.spring.mvc.chap05.dto.response.LoginUserResponseDTO;
 import com.spring.mvc.chap05.entity.Member;
 import com.spring.mvc.chap05.repository.MemberMapper;
+import com.spring.mvc.util.LoginUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -49,6 +50,7 @@ public class MemberService {
       log.info("{}-회원가입안했음", dto);
       return NO_ACC;
     }
+    // encoder.matches 인코딩 된 비밀번호 다시 돌려놓고 비교하기
     if (!encoder.matches(dto.getPassword(), foundMember.getPassword())){
       log.info("비밀번호 불일치");
       return NO_PW;
@@ -57,6 +59,7 @@ public class MemberService {
     return SUCCESS;
   }
 
+  //로그인 상태 유지
   public void maintainLoginState(HttpSession session,String account) {
     // 로그인 성공하면 세션에 로그인한 회원의 정보들을 저장
     /*
@@ -74,7 +77,7 @@ public class MemberService {
         .email(member.getEmail())
         .build();
     // 그 정보를 세션에 저장
-    session.setAttribute("login",dto);
+    session.setAttribute(LoginUtil.LOGIN_KEY,dto);
     // 세션의 수명을 설정 할 수 있음
     session.setMaxInactiveInterval(60*60);//1시간 - 기본값:30m
 
