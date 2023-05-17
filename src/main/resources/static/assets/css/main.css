@@ -53,7 +53,7 @@ header .inner-header {
     height: 120px;
     display: flex;
     justify-content: space-between;
-    align-items: center;    
+    align-items: center;
     font-weight: 700;
     color: #fff;
 }
@@ -68,10 +68,24 @@ header .inner-header .logo a {
 header .inner-header .logo a img {
     height: 60px;
 }
+
+
+/* 프로필 css */
+header .inner-header .profile-box {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    overflow: hidden;
+}
+header .inner-header .profile-box img {
+    width: 100%;
+}
+
+
 header .inner-header .intro-text {
     /* background: greenyellow; */
     flex: 4;
-    text-transform: uppercase;    
+    text-transform: uppercase;
     margin-left: 40px;
 }
 header .inner-header .menu-open {
@@ -79,8 +93,8 @@ header .inner-header .menu-open {
     flex: 1;
     font-size: 16px;
     display: flex;
-    justify-content: flex-end; 
-    align-items: center;   
+    justify-content: flex-end;
+    align-items: center;
 }
 header .inner-header .menu-open .lnr-menu {
     font-size: 33px;

@@ -34,4 +34,6 @@ public class Reply {
     private String replyWriter; // 댓글작성자
     private LocalDateTime replyDate;    //댓글쓴시간
     private long boardNo;   //댓글 넘버
+    private String account;
+    private String profileImage;
 }

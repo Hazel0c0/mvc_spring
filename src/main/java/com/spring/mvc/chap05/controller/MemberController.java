@@ -4,8 +4,11 @@ import com.spring.mvc.chap05.dto.LoginRequestDTO;
 import com.spring.mvc.chap05.dto.SignUpRequestDTO;
 import com.spring.mvc.chap05.service.LoginResult;
 import com.spring.mvc.chap05.service.MemberService;
+import com.spring.mvc.util.LoginUtil;
+import com.spring.mvc.util.upload.FileUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,6 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.Cookie;
@@ -21,12 +25,16 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import static com.spring.mvc.chap05.service.LoginResult.SUCCESS;
+import static com.spring.mvc.util.LoginUtil.*;
 
 @Controller
 @Slf4j
 @RequestMapping("/members")
 @RequiredArgsConstructor
 public class MemberController {
+
+  @Value("${file.upload.root-path}")
+  private String rootPath;
 
   private final MemberService memberService;
 
@@ -42,8 +50,17 @@ public class MemberController {
   @PostMapping("/sign-up")
   public String signUp(SignUpRequestDTO dto) {
     log.info("/members/sign-up POST ! - {}", dto);
-    boolean flag = memberService.join(dto);
-    return "redirect:/board/list";
+
+    MultipartFile profileImage = dto.getProfileImage();
+    log.info("프로필 사진 이름 : {}", profileImage.getOriginalFilename());
+
+    String savePath = null;
+    if (!profileImage.isEmpty()) {
+      // 실제 로컬 스토리지에 파일을 업로드하는 로직
+      savePath = FileUtil.uploadFile(profileImage, rootPath);
+    }
+      boolean flag = memberService.join(dto, savePath);
+      return "redirect:/members/sign-in";
   }
 
   //아이디 이메일 중복검사
@@ -74,14 +91,16 @@ public class MemberController {
   //로그인 검증 요청
   @PostMapping("/sign-in")
   public String signIn(LoginRequestDTO dto
-                       // 리다이렉션시 2번째 응답에 데이터를 보내기 위함
-            , RedirectAttributes ra
-            , HttpServletResponse response
-            , HttpServletRequest request
+      // 리다이렉션시 2번째 응답에 데이터를 보내기 위함
+      , RedirectAttributes ra
+      , HttpServletResponse response
+      , HttpServletRequest request
   ) {
     log.info("/members/sign-in POST! - {}", dto);
 
-    LoginResult result = memberService.authenticate(dto);
+    LoginResult result = memberService.authenticate(
+        dto, request.getSession(), response);
+
 //    memberService.authenticate(dto);
 
     //로그인 성공시
@@ -119,15 +138,29 @@ public class MemberController {
 
   // 로그아웃 요청 처리
   @GetMapping("/sign-out")
-  public String signOut(HttpSession session){
-    //세선에서 login 정보를 제거
-    session.removeAttribute("login");
+  public String signOut(
+      HttpServletRequest request,
+      HttpServletResponse response
+  ) {
 
-    // 세션을 아예 초기화 (세션만료 시간 초기화)
-    session.invalidate();
+    HttpSession session = request.getSession();
 
-    return "redirect:/";
+    //로그인 중인지 확인
+    if (isLogin(session)) {
+
+      // 자동로그인 상태라면 해제한다
+      // -? 로그인쿠키를 가지고 있느냐
+      if (isAutoLogin(request)) {
+        memberService.autoLoginClear(request, response);
+      }
+
+      //세선에서 login 정보를 제거
+      session.removeAttribute("login");
+
+      // 세션을 아예 초기화 (세션만료 시간 초기화)
+      session.invalidate();
+      return "redirect:/";
+    }
+    return "redirect:/members/sign-in";
   }
-
-
 }

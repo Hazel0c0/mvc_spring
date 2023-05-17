@@ -1,5 +1,6 @@
 package com.spring.mvc.chap05.repository;
 
+import com.spring.mvc.chap05.dto.AutoLoginDTO;
 import com.spring.mvc.chap05.entity.Member;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -25,4 +26,10 @@ public interface MemberMapper {
       @Param("keyword") String keyword);
   // 마이바티스 버전에 따라서 ^ 파람 구분 못하면 직접 써주기
   // type : 어떤 검사 할 건지
+
+  // 자동로그인 관련 속성 추기 기능
+  void saveAutoLogin(AutoLoginDTO dto);
+
+  // 쿠키값(세션아이디)으로 회원을 조회하는 기능
+  Member findMemberByCookie(String sessionId);
 }

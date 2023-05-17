@@ -25,4 +25,6 @@ public class Member {
   private String email;
   private Auth auth;
   private LocalDateTime regDate;
+  private LocalDateTime limitTime;
+  private String profileImage; // 이건 단순히 이미지 경로 ! (dto에서는 실제 이미지 파일)
 }

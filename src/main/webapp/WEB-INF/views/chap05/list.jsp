@@ -26,7 +26,6 @@
       <button class="add-btn">새 글 쓰기</button>
     </c:if>
   </div>
-
   <div class="top-section">
     <!-- 검색창 영역 -->
     <div class="search">
@@ -72,13 +71,13 @@
 
           </div>
         </section>
-<%--        <c:if test="login.account==b.account">--%>
+        <c:if test="${login.account == b.account || login.auth =='ADMIN'}">
           <div class="card-btn-group">
             <button class="del-btn" data-href="/board/delete?bno=${b.boardNo}">
               <i class="fas fa-times"></i>
             </button>
           </div>
-<%--        </c:if>--%>
+        </c:if>
       </div>
     </c:forEach>
 
@@ -201,7 +200,7 @@
     function removeHover(e) {
         if (!e.target.matches('.card-container *')) return;
         const $targetCard = e.target.closest('.card');
-        $targetCard?.classList.remove('card-hover');
+        if ($targetCard !== null) $targetCard.classList.remove('card-hover');
 
         const $delBtn = e.target.closest('.card-wrapper')?.querySelector('.del-btn');
         $delBtn.style.opacity = '0';

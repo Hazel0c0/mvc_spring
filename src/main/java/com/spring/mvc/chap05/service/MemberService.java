@@ -1,5 +1,6 @@
 package com.spring.mvc.chap05.service;
 
+import com.spring.mvc.chap05.dto.AutoLoginDTO;
 import com.spring.mvc.chap05.dto.LoginRequestDTO;
 import com.spring.mvc.chap05.dto.SignUpRequestDTO;
 import com.spring.mvc.chap05.dto.response.LoginUserResponseDTO;
@@ -10,8 +11,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.WebUtils;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import java.time.LocalDateTime;
 
 import static com.spring.mvc.chap05.service.LoginResult.*;
 
@@ -23,13 +30,14 @@ public class MemberService {
   private final PasswordEncoder encoder;
 
   // 회원가입 처리 서비스
-  public boolean join(final SignUpRequestDTO dto) {
+  public boolean join(final SignUpRequestDTO dto, final String savePath) {
     // dto를 entity로 변환
     Member member = Member.builder()
         .account(dto.getAccount())
         .email(dto.getEmail())
         .name(dto.getName())
         .password(encoder.encode(dto.getPassword()))
+        .profileImage(savePath)
         .build();
     // 매퍼에게 회원정보 전달해서 저장명령
     return memberMapper.save(member);
@@ -41,7 +49,9 @@ public class MemberService {
     return flagNum==1;
   }
 
-  public LoginResult authenticate(LoginRequestDTO dto) {
+  public LoginResult authenticate(LoginRequestDTO dto
+      , HttpSession session
+      , HttpServletResponse response) {
     Member foundMember = memberMapper.findMember(dto.getAccount());
 
 
@@ -55,6 +65,29 @@ public class MemberService {
       log.info("비밀번호 불일치");
       return NO_PW;
     }
+    // 자동로그인 체크 여부 확인
+    if (dto.isAutoLogin()) {
+      // 1. 쿠키 생성 - 쿠키 값에 세션아이디를 저장
+      Cookie autoLoginCookie = new Cookie(LoginUtil.AUTO_LOGIN_COOKIE, session.getId());
+      //2. 쿠키 셋팅 - 수명이랑 사용경로
+      int limitTime = 60*60*24*90;
+      autoLoginCookie.setMaxAge(limitTime);
+      autoLoginCookie.setPath("/"); //전체경로
+
+      //3. 쿠키를 클라이언트에 응답전송
+      response.addCookie(autoLoginCookie);
+
+      //4. DB에도 쿠이에 저장된 값과 수명을 저장
+      memberMapper.saveAutoLogin(
+          AutoLoginDTO.builder()
+              .sessionId(session.getId())
+              .account(dto.getAccount())
+              .limitTime(LocalDateTime.now().plusDays(90))
+              .build()
+      );
+
+    }
+
     log.info("{}님 로그인 성공",foundMember.getName());
     return SUCCESS;
   }
@@ -75,6 +108,8 @@ public class MemberService {
         .account(member.getAccount())
         .nickName(member.getName())
         .email(member.getEmail())
+        .auth(member.getAuth().toString())
+        .profile(member.getProfileImage())
         .build();
     // 그 정보를 세션에 저장
     session.setAttribute(LoginUtil.LOGIN_KEY,dto);
@@ -85,5 +120,30 @@ public class MemberService {
   // 멤버 정보 가져오는 서비스 기능
   public Member getMember(String account) {
     return memberMapper.findMember(account);
+  }
+
+  public void autoLoginClear(HttpServletRequest request
+      , HttpServletResponse response) {
+    // 1. 자동로그인 쿠키를 가져온다
+    Cookie c = WebUtils.getCookie(request, LoginUtil.AUTO_LOGIN_COOKIE);
+    // WebUtils 자주 쓰면 LoginUtil에 넣기
+
+    // 2. 쿠키를 삭제한다
+    // -> 쿠키의 수명을 0초로 만들어서 다시 클라이언트에게 응답
+    if(c!= null){
+      c.setMaxAge(0);
+      c.setPath("/"); //쿠키안지워지면 path도 맞춰주기
+      response.addCookie(c);
+    }
+    // 3. 데이터베이스에도 자동로그인을 해제한다.
+    memberMapper.saveAutoLogin(
+        AutoLoginDTO.builder()
+            .sessionId("none")
+            .limitTime(LocalDateTime.now())
+            .account(LoginUtil.getCurrentLoginMemberAccount(
+                    request.getSession()))
+            .build()
+    );
+
   }
 }
