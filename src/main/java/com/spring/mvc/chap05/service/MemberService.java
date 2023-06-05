@@ -2,8 +2,9 @@ package com.spring.mvc.chap05.service;
 
 import com.spring.mvc.chap05.dto.AutoLoginDTO;
 import com.spring.mvc.chap05.dto.LoginRequestDTO;
-import com.spring.mvc.chap05.dto.SignUpRequestDTO;
+import com.spring.mvc.chap05.dto.request.SignUpRequestDTO;
 import com.spring.mvc.chap05.dto.response.LoginUserResponseDTO;
+import com.spring.mvc.chap05.entity.LoginMethod;
 import com.spring.mvc.chap05.entity.Member;
 import com.spring.mvc.chap05.repository.MemberMapper;
 import com.spring.mvc.util.LoginUtil;
@@ -30,7 +31,8 @@ public class MemberService {
   private final PasswordEncoder encoder;
 
   // 회원가입 처리 서비스
-  public boolean join(final SignUpRequestDTO dto, final String savePath) {
+  public boolean join(final SignUpRequestDTO dto
+      , final String savePath) {
     // dto를 entity로 변환
     Member member = Member.builder()
         .account(dto.getAccount())
@@ -38,6 +40,7 @@ public class MemberService {
         .name(dto.getName())
         .password(encoder.encode(dto.getPassword()))
         .profileImage(savePath)
+        .loginMethod(LoginMethod.COMMON)
         .build();
     // 매퍼에게 회원정보 전달해서 저장명령
     return memberMapper.save(member);

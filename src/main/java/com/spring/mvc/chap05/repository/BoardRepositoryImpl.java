@@ -35,7 +35,7 @@ public class BoardRepositoryImpl
     public List<Board> findAll() {
         return boardMap.values()
                 .stream()
-                .sorted(comparing(Board::getBoardNo).reversed())
+                .sorted(comparing((Board board) -> board.getBoardNo()).reversed())
                 .collect(toList())
                 ;
     }

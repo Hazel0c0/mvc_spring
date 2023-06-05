@@ -14,7 +14,7 @@ public class LoginUtil {
   public static final String LOGIN_KEY = "login";
   public static final String AUTO_LOGIN_COOKIE = "auto";
 
-  // 로그인 여부 확인
+  // 로그인 여부 확인  : 범용으로 쓰게 static 로그인을 했는지 알려면 세션 받아오기
   public static boolean isLogin(HttpSession session) {
     return session.getAttribute(LOGIN_KEY) != null;
   }

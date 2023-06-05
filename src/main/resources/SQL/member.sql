@@ -71,3 +71,8 @@ from tbl_reply A
          join tbl_member B
               on A.account = b.account
 where board_no = 299;
+
+alter table tbl_member
+    add login_method VARCHAR(20);
+
+select * from tbl_member;

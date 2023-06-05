@@ -28,7 +28,8 @@ public class BoardService {
 
         return boardRepository.findAll(page)
                 .stream()
-                .map(BoardListResponseDTO::new)
+                .map(board ->
+                    new BoardListResponseDTO(board))
                 .collect(toList())
                 ;
     }

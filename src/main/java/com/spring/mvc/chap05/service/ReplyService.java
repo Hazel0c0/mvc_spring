@@ -33,7 +33,7 @@ public class ReplyService {
 
         List<ReplyDetailResponseDTO> replies = replyMapper.findAll(boardNo, page)
                 .stream()
-                .map(ReplyDetailResponseDTO::new)
+                .map(reply -> new ReplyDetailResponseDTO(reply))
                 .collect(toList());
 
         int count = replyMapper.count(boardNo);
